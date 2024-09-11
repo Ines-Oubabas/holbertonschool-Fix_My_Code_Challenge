@@ -11,41 +11,42 @@
  */
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
-    dlistint_t *tmp = *head;
-    unsigned int p = 0;
+    dlistint_t *current;
+    unsigned int p;
 
     if (*head == NULL)
         return (-1);
 
-    /* Si le nœud à supprimer est le premier */
-    if (index == 0)
-    {
-        *head = tmp->next;
-        if (*head != NULL)
-            (*head)->prev = NULL;
-        free(tmp);
-        return (1);
-    }
+    current = *head;
+    p = 0;
 
-    /* Parcourir la liste pour trouver le nœud à supprimer */
-    while (tmp != NULL && p < index)
+    /* Traverse the list to find the node at the index */
+    while (current != NULL && p < index)
     {
-        tmp = tmp->next;
+        current = current->next;
         p++;
     }
 
-    /* Si le nœud à supprimer n'existe pas */
-    if (tmp == NULL)
+    if (current == NULL) /* If index is out of bounds */
         return (-1);
 
-    /* Mise à jour des pointeurs */
-    if (tmp->prev != NULL)
-        tmp->prev->next = tmp->next;
+    /* Case 1: Deleting the head node */
+    if (current == *head)
+    {
+        *head = current->next;
+        if (*head != NULL)
+            (*head)->prev = NULL;
+    }
+    else
+    {
+        /* Case 2: Deleting any other node */
+        if (current->prev != NULL)
+            current->prev->next = current->next;
 
-    if (tmp->next != NULL)
-        tmp->next->prev = tmp->prev;
+        if (current->next != NULL)
+            current->next->prev = current->prev;
+    }
 
-    free(tmp);
-
+    free(current);
     return (1);
 }
